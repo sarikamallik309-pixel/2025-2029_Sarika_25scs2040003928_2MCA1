@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="powerbi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI & Excel Sales Forecasting Intelligence | Sarika Kumari</title>
+    <meta name="description" content="Microsoft Power BI & Excel inspired Sales Forecasting Application implementing ARIMA, Prophet, Holt-Winters, and LSTM neural networks based on Codec Technologies research.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. LIVE RETAIL TICKER TAPE BAR -->
+    <div class="ticker-tape" aria-label="Live Retail Intelligence Ticker Tape">
+        <div class="ticker-content">
+            <span class="ticker-item"><span class="ticker-tag">POWER BI DESKTOP</span> <span class="ticker-up">DAX Measures Active</span> | Fabric Connected</span>
+            <span class="ticker-item"><span class="ticker-tag">EXCEL FINANCIAL GRID</span> <span class="ticker-up">Pivot Engine Ready</span> | Resampled Daily/Weekly</span>
+            <span class="ticker-item"><span class="ticker-tag">ELECTRONICS</span> <span class="ticker-up">▲ +18.4% YoY</span> | Avg Order: $320.00</span>
+            <span class="ticker-item"><span class="ticker-tag">BEST ACCURACY</span> <span class="ticker-up">⭐ LSTM Neural Net (R² = 0.996)</span></span>
+            <!-- Duplicate for infinite marquee loop -->
+            <span class="ticker-item"><span class="ticker-tag">POWER BI DESKTOP</span> <span class="ticker-up">DAX Measures Active</span> | Fabric Connected</span>
+            <span class="ticker-item"><span class="ticker-tag">EXCEL FINANCIAL GRID</span> <span class="ticker-up">Pivot Engine Ready</span> | Resampled Daily/Weekly</span>
+            <span class="ticker-item"><span class="ticker-tag">ELECTRONICS</span> <span class="ticker-up">▲ +18.4% YoY</span> | Avg Order: $320.00</span>
+            <span class="ticker-item"><span class="ticker-tag">BEST ACCURACY</span> <span class="ticker-up">⭐ LSTM Neural Net (R² = 0.996)</span></span>
+        </div>
+    </div>
+
+    <!-- 2. BRAND HEADER WITH THEME SWITCHER -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo" id="appLogo">📊</div>
+            <div class="brand-title">
+                <h1>Sales Forecasting Intelligence</h1>
+                <p><span class="live-dot"></span> Power BI & Excel Retail Analytics Engine</p>
+            </div>
+        </div>
+        
+        <div class="header-badges">
+            <!-- Theme Switcher Selector -->
+            <div class="toolbar-group">
+                <label for="themeSelect" class="toolbar-label" style="color:var(--text-secondary);">Dashboard Canvas Theme:</label>
+                <select class="select-input" id="themeSelect">
+                    <option value="powerbi" selected>🟡 Power BI Dark Desktop</option>
+                    <option value="excel">🟢 Excel Financial Grid</option>
+                    <option value="obsidian">🔵 Dark Obsidian Retail</option>
+                </select>
+            </div>
+
+            <span class="badge badge-theme">Sarika Kumari (MCA)</span>
+            <span class="badge">Codec Technologies</span>
+        </div>
+    </header>
+
+    <!-- 3. MAIN CONTAINER -->
+    <main class="main-container">
+
+        <!-- FILTER & VARIATION TOOLBAR -->
+        <section class="filter-toolbar" aria-label="Retail Dataset & Granularity Controls">
+            <div class="toolbar-group">
+                <span class="toolbar-label">Retail Vertical:</span>
+                <div class="segmented-control" id="categorySegments">
+                    <button class="segment-btn active" data-category="electronics">Electronics & Tech</button>
+                    <button class="segment-btn" data-category="apparel">Apparel & Fashion</button>
+                    <button class="segment-btn" data-category="home">Home & Living</button>
+                    <button class="segment-btn" data-category="beauty">Beauty & Care</button>
+                </div>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Granularity:</span>
+                <div class="segmented-control" id="granularitySegments">
+                    <button class="segment-btn active" data-resample="daily">Daily</button>
+                    <button class="segment-btn" data-resample="weekly">Weekly</button>
+                    <button class="segment-btn" data-resample="monthly">Monthly</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPI SUMMARY CARDS GRID (WITH DAX BADGES) -->
+        <section class="kpi-grid" aria-label="Executive Key Performance Indicators">
+            <div class="kpi-card" id="kpiTotalRevenue">
+                <div class="kpi-header">
+                    <span>Total Historical Sales</span>
+                    <span class="dax-badge">[Sum Sales]</span>
+                </div>
+                <div class="kpi-value" id="kpiRevenueVal">$0.00</div>
+                <div class="kpi-footer positive" id="kpiRevenueSub">2 Years Historical Baseline</div>
+            </div>
+
+            <div class="kpi-card" id="kpiAvgDaily">
+                <div class="kpi-header">
+                    <span>Avg Period Demand</span>
+                    <span class="dax-badge">[Average Sales]</span>
+                </div>
+                <div class="kpi-value" id="kpiAvgDailyVal">$0.00</div>
+                <div class="kpi-footer" id="kpiAvgDailySub">Resampled Period Mean</div>
+            </div>
+
+            <div class="kpi-card" id="kpiBestModel">
+                <div class="kpi-header">
+                    <span>Top Model Architecture</span>
+                    <span class="dax-badge">[Max R² Score]</span>
+                </div>
+                <div class="kpi-value" id="kpiBestModelVal">LSTM</div>
+                <div class="kpi-footer positive" id="kpiBestModelSub">Highest Precision Rating</div>
+            </div>
+
+            <div class="kpi-card" id="kpiForecastGrowth">
+                <div class="kpi-header">
+                    <span>Forecasted Demand Growth</span>
+                    <span class="dax-badge">[Growth YoY %]</span>
+                </div>
+                <div class="kpi-value" id="kpiGrowthVal">+18.4%</div>
+                <div class="kpi-footer positive" id="kpiGrowthSub">Next 60 Days Horizon</div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD CONTROLS & TABS -->
+        <div class="dashboard-controls">
+            <nav class="tabs-nav" aria-label="Dashboard Navigation Tabs">
+                <button class="tab-btn active" data-tab="tabOverview" id="btnTabOverview">
+                    📊 Demand Overview
+                </button>
+                <button class="tab-btn" data-tab="tabDecomposition" id="btnTabDecomposition">
+                    🔍 Seasonal Decomposition
+                </button>
+                <button class="tab-btn" data-tab="tabForecasting" id="btnTabForecasting">
+                    🔮 Model Benchmarking (ARIMA/Prophet/LSTM/Holt-Winters)
+                </button>
+                <button class="tab-btn" data-tab="tabSupplyChain" id="btnTabSupplyChain">
+                    📦 Supply Chain & Inventory
+                </button>
+                <button class="tab-btn" data-tab="tabSimulator" id="btnTabSimulator">
+                    🎛️ Scenario Simulator
+                </button>
+                <button class="tab-btn" data-tab="tabInsights" id="btnTabInsights">
+                    💡 Business Insights
+                </button>
+            </nav>
+
+            <div class="control-actions">
+                <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                <button class="btn" id="btnUploadCSV">
+                    📁 Import Custom CSV
+                </button>
+                <button class="btn btn-primary" id="btnExportReport">
+                    📥 Export Excel / Power BI CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB 1: HISTORICAL OVERVIEW -->
+        <section class="tab-pane active" id="tabOverview">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>📈 Revenue Trajectory (<span id="activeCategoryName">Electronics & Tech</span>)</span>
+                    </div>
+                    <div class="chart-actions">
+                        <label for="movingAvgSelect" style="font-size:0.8rem; color:var(--text-secondary);">Smoothing:</label>
+                        <select class="select-input" id="movingAvgSelect">
+                            <option value="1">Raw Series</option>
+                            <option value="7" selected>7-Period Moving Avg</option>
+                            <option value="30">30-Period Moving Avg</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="chartHistoricalOverview" class="chart-box"></div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SEASONAL DECOMPOSITION -->
+        <section class="tab-pane" id="tabDecomposition">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>🧩 Time-Series Seasonal Decomposition</span>
+                    </div>
+                    <div class="chart-actions">
+                        <label for="decompModeSelect" style="font-size:0.8rem; color:var(--text-secondary);">Mode:</label>
+                        <select class="select-input" id="decompModeSelect">
+                            <option value="additive" selected>Additive (Y = T + S + R)</option>
+                            <option value="multiplicative">Multiplicative (Y = T * S * R)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="decomposition-grid">
+                    <div id="chartDecompTrend" class="decomp-box"></div>
+                    <div id="chartDecompSeasonal" class="decomp-box"></div>
+                    <div id="chartDecompResidual" class="decomp-box"></div>
+                    <div id="chartACFPlot" class="decomp-box"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: MODEL FORECASTING & BENCHMARK -->
+        <section class="tab-pane" id="tabForecasting">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>🔮 Model Predictions vs Actual Test Sales (With 95% Confidence Bounds)</span>
+                    </div>
+                    <div class="chart-actions">
+                        <label for="forecastHorizonSelect" style="font-size:0.8rem; color:var(--text-secondary);">Horizon:</label>
+                        <select class="select-input" id="forecastHorizonSelect">
+                            <option value="30">30 Days Ahead</option>
+                            <option value="60" selected>60 Days Ahead</option>
+                            <option value="90">90 Days Ahead</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="chartModelComparison" class="chart-box"></div>
+            </div>
+
+            <!-- Model Metrics Table -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>🏆 Model Performance Benchmark (With R² & Precision Metrics)</span>
+                    </div>
+                </div>
+                <div class="metrics-table-wrapper">
+                    <table class="metrics-table" id="metricsTable">
+                        <thead>
+                            <tr>
+                                <th>Model Architecture</th>
+                                <th>MAE ($)</th>
+                                <th>RMSE ($)</th>
+                                <th>MAPE (%)</th>
+                                <th>R² Accuracy Score</th>
+                                <th>Evaluation Summary</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metricsTableBody">
+                            <!-- Populated dynamically via app.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: SUPPLY CHAIN & INVENTORY RISK -->
+        <section class="tab-pane" id="tabSupplyChain">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>📦 Supply Chain Inventory & Reorder Point Heatmap</span>
+                    </div>
+                    <span class="badge badge-theme">Safety Stock Calculator</span>
+                </div>
+                <div class="inventory-grid" id="inventoryGrid">
+                    <!-- Populated dynamically via app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: PROMOTIONAL SIMULATOR -->
+        <section class="tab-pane" id="tabSimulator">
+            <div class="grid-2col">
+                <div class="chart-card simulator-panel">
+                    <div class="chart-title">
+                        <span>🎛️ Scenario Simulation Levers</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:var(--text-secondary);">
+                        Simulate revenue lift for upcoming promotional depth, marketing spend boost, and macro demand shifts.
+                    </p>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Promotional Discount Depth</span>
+                            <span class="slider-val" id="valPromoDiscount">20%</span>
+                        </div>
+                        <input type="range" min="0" max="40" value="20" class="range-slider" id="sliderPromoDiscount">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Marketing Spend Multiplier</span>
+                            <span class="slider-val" id="valMktgSpend">1.5x</span>
+                        </div>
+                        <input type="range" min="0.5" max="3.0" step="0.1" value="1.5" class="range-slider" id="sliderMktgSpend">
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Macro Economic Index</span>
+                            <span class="slider-val" id="valDemandIdx">1.0x</span>
+                        </div>
+                        <input type="range" min="0.7" max="1.4" step="0.05" value="1.0" class="range-slider" id="sliderDemandIdx">
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <span>🚀 Projected Sales Lift Curve</span>
+                        </div>
+                    </div>
+                    <div id="chartSimulatorProjection" class="chart-box" style="min-height:300px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: BUSINESS INSIGHTS -->
+        <section class="tab-pane" id="tabInsights">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>💡 Strategic Business Insights & Decision Support</span>
+                    </div>
+                </div>
+                <div class="insights-list" id="insightsList">
+                    <div class="insight-card gold">
+                        <div class="insight-title">📦 Supply Chain Stockout Mitigation</div>
+                        <div class="insight-body">
+                            Q4 holiday surge requires a minimum safety buffer of <strong>2,450 units</strong> by November 1st. Automated reorder point triggered when stock falls below 14 days of lead-time demand.
+                        </div>
+                    </div>
+
+                    <div class="insight-card emerald">
+                        <div class="insight-title">🎯 Multi-Category Promotional Yield</div>
+                        <div class="insight-body">
+                            <strong>Apparel & Fashion</strong> exhibits the highest promotional elasticity (+50.0% lift per 20% discount), whereas <strong>Electronics & Tech</strong> benefits most from bundled financing incentives rather than direct discount depth.
+                        </div>
+                    </div>
+
+                    <div class="insight-card purple">
+                        <div class="insight-title">🧠 Model Recommendation (LSTM & Holt-Winters)</div>
+                        <div class="insight-body">
+                            The <strong>LSTM Neural Network</strong> achieves an $R^2 = 0.996$ score by capturing complex non-linear sequence spikes. For lightweight Excel/Power BI tabular integration, <strong>Holt-Winters Exponential Smoothing</strong> offers the optimal statistical baseline.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div>
+                <strong>Power BI & Excel Sales Forecasting Intelligence</strong> | Internship research by <strong>Sarika Kumari</strong> (Roll: 25scs2040003928, MCA)
+            </div>
+            <div>
+                Supervised at <strong>Codec Technologies Pvt. Ltd.</strong> | Approved by <strong>AICTE / ICAC / IILM University</strong>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script src="dataset.js"></script>
+    <script src="forecasting_engine.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
